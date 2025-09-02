@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser, SignOutButton } from '@clerk/clerk-react';
-import AuthModal from './auth/AuthModal';
 
 const Navbar = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [authModal, setAuthModal] = useState({ isOpen: false, mode: 'signin', userType: '' });
   const { isSignedIn, user } = useUser();
-  const menuItems = ['Home', 'About Us', 'Service', 'Contact'];
+  const navigate = useNavigate();
+  const menuItems = [
+    { name: 'Home', path: '/' },
+    { name: 'About Us', path: '/about-us' },
+    { name: 'Service', path: '/service' },
+    { name: 'Contact', path: '/contact' }
+  ];
   const loginOptions = ['Patient', 'Doctor', 'Management'];
 
   useEffect(() => {
@@ -27,7 +32,7 @@ const Navbar = () => {
         ? 'bg-white/95 shadow-xl border-gray-200 py-2' 
         : 'bg-white/80 shadow-lg border-gray-100 py-0'
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0 group cursor-pointer">
             <div className="w-10 h-10 bg-gradient-to-br from-[#2E7D32] to-[#4CAF50] rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 relative overflow-hidden">
@@ -36,18 +41,18 @@ const Navbar = () => {
             </div>
           </div>
           
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden  md:flex items-center space-x-1  ">
             {menuItems.map((item, index) => (
-              <a
-                key={item}
-                href="#"
+              <button
+                key={item.name}
+                onClick={() => navigate(item.path)}
                 className="relative text-[#101010] px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <span className="relative z-10 transition-colors duration-300 group-hover:text-white">{item}</span>
+                <span className="relative z-10 transition-colors duration-300 group-hover:text-white">{item.name}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-lg"></div>
                 <div className="absolute inset-0 bg-white/10 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-lg"></div>
-              </a>
+              </button>
             ))}
             
             <DropdownMenu open={isLoginOpen} onOpenChange={setIsLoginOpen}>
@@ -77,7 +82,12 @@ const Navbar = () => {
                       className="px-4 py-3 text-sm text-[#101010] hover:bg-gradient-to-r hover:from-[#2E7D32] hover:to-[#4CAF50] hover:text-white transition-all duration-200 relative group overflow-hidden"
                       style={{ animationDelay: `${index * 50}ms` }}
                       onClick={() => {
-                        setAuthModal({ isOpen: true, mode: 'signin', userType: option });
+                        const routes = {
+                          'Patient': '/patient-login',
+                          'Doctor': '/doctor-login',
+                          'Management': '/management-login'
+                        };
+                        navigate(routes[option]);
                         setIsLoginOpen(false);
                       }}
                     >
@@ -112,15 +122,17 @@ const Navbar = () => {
       }`}>
         <div className="px-4 py-4 bg-white/95 backdrop-blur-md border-t border-gray-200">
           {menuItems.map((item, index) => (
-            <a
-              key={item}
-              href="#"
-              className="block px-4 py-3 text-[#101010] hover:bg-[#2E7D32] hover:text-white rounded-lg transition-all duration-200 mb-1"
+            <button
+              key={item.name}
+              onClick={() => {
+                navigate(item.path);
+                setIsMobileMenuOpen(false);
+              }}
+              className="block w-full text-left px-4 py-3 text-[#101010] hover:bg-[#2E7D32] hover:text-white rounded-lg transition-all duration-200 mb-1"
               style={{ animationDelay: `${index * 100}ms` }}
-              onClick={() => setIsMobileMenuOpen(false)}
             >
-              {item}
-            </a>
+              {item.name}
+            </button>
           ))}
           
           <div className="mt-2 pt-2 border-t border-gray-200">
@@ -138,7 +150,12 @@ const Navbar = () => {
                   className="block w-full text-left px-4 py-3 text-[#101010] hover:bg-[#2E7D32] hover:text-white rounded-lg transition-all duration-200 mb-1"
                   style={{ animationDelay: `${(index + menuItems.length) * 100}ms` }}
                   onClick={() => {
-                    setAuthModal({ isOpen: true, mode: 'signin', userType: option });
+                    const routes = {
+                      'Patient': '/patient-login',
+                      'Doctor': '/doctor-login',
+                      'Management': '/management-login'
+                    };
+                    navigate(routes[option]);
                     setIsMobileMenuOpen(false);
                   }}
                 >
@@ -150,12 +167,7 @@ const Navbar = () => {
         </div>
       </div>
       
-      <AuthModal 
-        isOpen={authModal.isOpen}
-        onClose={() => setAuthModal({ ...authModal, isOpen: false })}
-        mode={authModal.mode}
-        userType={authModal.userType}
-      />
+
     </nav>
   );
 };
