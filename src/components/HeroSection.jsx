@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -59,7 +61,10 @@ const HeroSection = () => {
               <button className="px-8 py-3 bg-[#3ca741] text-white rounded-lg font-medium hover:bg-[#1B5E20] transition-colors duration-200 shadow-lg hover:shadow-xl">
                 Get Started
               </button>
-              <button className="px-8 py-3 border-2 border-[#2E7D32] text-[#ffffff] rounded-lg font-medium hover:bg-[#2E7D32] hover:text-white transition-all duration-200">
+              <button 
+                onClick={() => navigate('/panchakarma')}
+                className="px-8 py-3 border-2 border-[#2E7D32] text-[#ffffff] rounded-lg font-medium hover:bg-[#2E7D32] hover:text-white transition-all duration-200"
+              >
                 Learn More
               </button>
             </div>
