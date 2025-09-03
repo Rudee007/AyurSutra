@@ -53,8 +53,8 @@ const DoctorLogin = () => {
             </div>
 
             <SignIn 
+              forceRedirectUrl="/doctor-dashboard"
               fallbackRedirectUrl="/doctor-dashboard"
-              signUpFallbackRedirectUrl="/doctor-dashboard"
               appearance={{
                 elements: {
                   formButtonPrimary: 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200',

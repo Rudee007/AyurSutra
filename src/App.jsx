@@ -12,14 +12,15 @@ import PatientDashboard from "./pages/PatientDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import ManagementDashboard from "./pages/ManagementDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import DoctorProtectedRoute from "./components/DoctorProtectedRoute";
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen">
         <Navbar />
-        <ProtectedRoute>
-          <Routes>
+        <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/service" element={<Service />} />
@@ -28,11 +29,24 @@ function App() {
           <Route path="/patient-login" element={<PatientLogin />} />
           <Route path="/doctor-login" element={<DoctorLogin />} />
           <Route path="/management-login" element={<ManagementLogin />} />
-          <Route path="/patient-dashboard" element={<PatientDashboard />} />
-          <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-          <Route path="/management-dashboard" element={<ManagementDashboard />} />
-          </Routes>
-        </ProtectedRoute>
+          
+          {/* Protected Routes */}
+          <Route path="/patient-dashboard" element={
+            <ProtectedRoute>
+              <PatientDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/doctor-dashboard" element={
+            <DoctorProtectedRoute>
+              <DoctorDashboard />
+            </DoctorProtectedRoute>
+          } />
+          <Route path="/management-dashboard" element={
+            <ProtectedRoute>
+              <ManagementDashboard />
+            </ProtectedRoute>
+          } />
+        </Routes>
       </div>
     </Router>
   );
