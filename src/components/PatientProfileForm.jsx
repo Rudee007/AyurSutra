@@ -17,18 +17,13 @@ const PatientProfileForm = ({ onComplete }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/patient/profile`);
-        if (response.ok) {
-          const data = await response.json();
-          setFormData(data.profile || formData);
-        }
-      } catch (err) {
-        console.warn('Could not load profile data');
-      } finally {
-        setIsLoading(false);
+    const loadProfile = () => {
+      // Load from localStorage only
+      const savedProfile = localStorage.getItem('patientProfile');
+      if (savedProfile) {
+        setFormData(JSON.parse(savedProfile));
       }
+      setIsLoading(false);
     };
     loadProfile();
   }, []);
@@ -42,7 +37,7 @@ const PatientProfileForm = ({ onComplete }) => {
     setError('');
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     
     if (!formData.name || !formData.age || !formData.phone) {
@@ -52,25 +47,13 @@ const PatientProfileForm = ({ onComplete }) => {
 
     setIsSaving(true);
     
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/patient/profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update profile');
-      }
-
-      onComplete && onComplete();
-    } catch (err) {
-      setError(err.message || 'Failed to update profile. Please try again.');
-    } finally {
+    // Store profile data in localStorage only
+    localStorage.setItem('patientProfile', JSON.stringify(formData));
+    
+    setTimeout(() => {
       setIsSaving(false);
-    }
+      onComplete && onComplete();
+    }, 1000);
   };
 
   return (

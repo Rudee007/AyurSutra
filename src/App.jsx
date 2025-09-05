@@ -13,6 +13,12 @@ import DoctorDashboard from "./pages/DoctorDashboard";
 import ManagementDashboard from "./pages/ManagementDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DoctorProtectedRoute from "./components/DoctorProtectedRoute";
+import SimpleDoctorProtectedRoute from "./components/SimpleDoctorProtectedRoute";
+import PatientDetailsForm from "./components/PatientDetailsForm";
+import AppointmentBooking from "./components/AppointmentBooking";
+import DoctorDetail from "./components/DoctorDetail";
+import ConfirmAppointment from "./components/ConfirmAppointment";
+
 
 function App() {
   return (
@@ -37,6 +43,11 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/doctor-dashboard" element={
+            <SimpleDoctorProtectedRoute>
+              <DoctorDashboard />
+            </SimpleDoctorProtectedRoute>
+          } />
+          <Route path="/doctor/:doctorId" element={
             <DoctorProtectedRoute>
               <DoctorDashboard />
             </DoctorProtectedRoute>
@@ -46,6 +57,14 @@ function App() {
               <ManagementDashboard />
             </ProtectedRoute>
           } />
+          
+          {/* New Hospital Management Routes */}
+          <Route path="/patient-profile" element={<PatientDetailsForm onSubmit={() => {}} onBack={() => {}} />} />
+          <Route path="/appointment-booking" element={<AppointmentBooking />} />
+          <Route path="/doctor/:id" element={<DoctorDetail />} />
+          <Route path="/doctor-info/:id" element={<DoctorDetail />} />
+          <Route path="/confirm-appointment" element={<ConfirmAppointment />} />
+
         </Routes>
       </div>
     </Router>

@@ -1,7 +1,30 @@
-import { SignIn } from '@clerk/clerk-react';
-import { Stethoscope, Zap, Shield } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Stethoscope, Zap, Shield, User, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { doctorAuthService } from '../services/doctorAuthService';
 
 const DoctorLogin = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    const result = await doctorAuthService.loginDoctor(username, password);
+    
+    if (result.success) {
+      navigate('/doctor-dashboard');
+    } else {
+      setError(result.error);
+    }
+    
+    setIsLoading(false);
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background elements */}
@@ -52,22 +75,59 @@ const DoctorLogin = () => {
               </div>
             </div>
 
-            <SignIn 
-              forceRedirectUrl="/doctor-dashboard"
-              fallbackRedirectUrl="/doctor-dashboard"
-              appearance={{
-                elements: {
-                  formButtonPrimary: 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200',
-                  card: 'shadow-none bg-transparent',
-                  headerTitle: 'hidden',
-                  headerSubtitle: 'hidden',
-                  formFieldInput: 'bg-white/10 border-white/20 text-white placeholder:text-white/60 rounded-xl',
-                  formFieldLabel: 'text-blue-200 font-medium',
-                  identityPreviewText: 'text-white',
-                  formFieldInputShowPasswordButton: 'text-blue-300 hover:text-blue-200'
-                }
-              }}
-            />
+            <form onSubmit={handleLogin} className="space-y-6">
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center space-x-3">
+                  <AlertCircle className="w-5 h-5 text-red-400" />
+                  <p className="text-red-300 font-medium">{error}</p>
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-blue-200 font-medium mb-2">Username</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/60" />
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/60 rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    placeholder="Enter your username"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-blue-200 font-medium mb-2">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/60" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/60 rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                    placeholder="Enter your password"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 disabled:scale-100 transition-all duration-200 flex items-center justify-center space-x-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Logging in...</span>
+                  </>
+                ) : (
+                  <span>Login to Dashboard</span>
+                )}
+              </button>
+            </form>
           </div>
         </div>
       </div>
